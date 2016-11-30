@@ -1,3 +1,6 @@
+test_miners = ['DEDIS', 'Rivest', 'Shamir', 'Adleman'];
+test_id_offset = 11;
+
 function init_paper(){
     graph = new joint.dia.Graph;
 
@@ -69,7 +72,7 @@ blocks = [];
 
 function add_block(block){
 	console.log("Adding block: ", JSON.stringify(block))
-	if (block.block_cnt > blocks.length || block.block_cnt == 0){
+	if (block.block_cnt > blocks.length || !block.block_cnt){
 		block.block_cnt = blocks.length;
 	}
 	var previous = previous_block(block);
@@ -78,8 +81,12 @@ function add_block(block){
 		return;
 	}
 	if (!verify_pow(block)){
-		alert("PoW not correct for:" + JSON.stringify(block));
-		return;
+		if (!block.pow){
+			block.pow = calc_pow(block)
+		} else {
+			alert("PoW not correct for:" + JSON.stringify(block));
+			return;
+		}
 	}
     var el1 = new joint.shapes.html.Element({
         size: { width: 170, height: 100 },
@@ -154,5 +161,19 @@ function rnd_array(a){
 	return Math.floor(Math.random()*a.length)
 }
 
+function seed_rand(){
+	for (var i=0; i<(new Date().getMilliseconds()) % 1000; i++){
+		Math.random();
+	}
+}
+
+function start_dedis(){
+		var genesis = make_block_pow('DEDIS', test_id_offset, 0, 0);
+        add_block(genesis);
+}
+
 add_html();
 add_html_new();
+init_paper();
+seed_rand();
+test_id_offset = Math.floor(Math.random()*100) + 1

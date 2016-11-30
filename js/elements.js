@@ -16,7 +16,6 @@ function add_html_new(){
 // -------------------------------------------------------------------------
 
     joint.shapes.htmlnew.ElementView = joint.dia.ElementView.extend({
-
         template: [
             '<div class="html-element">',
             'Label: <input type="text" id="label"/><br>',
@@ -34,13 +33,11 @@ function add_html_new(){
             this.$box = $(_.template(this.template)());
             var t = this;
             ['#label', '#miner_id', '#block_cnt', '#last_pow', '#pow'].forEach(function(el){
-//            ['#miner_id'].forEach(function(el){
 				t.$box.find(el).on('mousedown click', function(evt) {
     	            evt.stopPropagation();
         	    });
             	// This is an example of reacting on the input change and storing the input data in the cell model.
 	            t.$box.find(el).on('change', _.bind(function(evt) {
-//    	        	alert("changed" + $(evt.target).val())
     	        	t.model.set(el.slice(1, el.length), $(evt.target).val());
     	        	if (el == "#pow"){
     	        		console.log("New block:" + JSON.stringify(t.model));
@@ -109,7 +106,6 @@ function add_html(){
 
         template: [
             '<div class="html-element">',
-            '<button class="delete">x</button>',
             '<label></label><br>',
             '<div id="data" style="text-align:right">',
             'Miner-ID: <span id="miner-id">xx</span><br>',
@@ -160,6 +156,12 @@ function add_html(){
         },
         removeBox: function(evt) {
             this.$box.remove();
-        }
+        },
+        pointerclick: function(){
+        	var miner_id = rnd_array(test_miners);
+        	var block = this.model.get('block');
+        	var block_new = test_newblock(block.block_cnt + 1, block.pow);
+        	add_block(block_new);
+        },
     });
 }

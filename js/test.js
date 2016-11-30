@@ -1,21 +1,20 @@
-test_miners = ['Ismail', 'Linus', 'DEDIS'];
+function test_newblock(level, last_pow){
+	var miner_id = rnd_array(test_miners);
+	var miner = test_miners[miner_id];
+	return make_block_pow(miner, miner_id + test_id_offset, level, last_pow)
+}
 
-function test_newblock(){
-	var miner_id = rnd_array(test_miners) + 1;
-	var miner = test_miners[miner_id - 1];
-	var level = rnd_array(blocks);
+function test_newblock_random(){
+	var level = rnd_array(blocks) + 1;
 	var previous = blocks[level][rnd_array(blocks[level])];
-//	console.log("Previous:", miner, level, JSON.stringify(previous));
-	var block = make_block_pow(miner, miner_id, level + 1, previous.pow)
-	add_block(block);
-	return true;
+	add_block(test_newblock(level, previous.pow));
 }
 
 // Creates some blocks
 function test_blocks(){
 	var genesis = make_block_pow('DEDIS', 11, 0, 0);
     add_block(genesis);
-	window.setInterval(test_newblock, 500);
+//	window.setInterval(test_newblock_random, 500);
 //	for (var b = 0; b < 10; b++){
 //		test_newblock(miners);
 //	}
