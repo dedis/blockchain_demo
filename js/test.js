@@ -1,7 +1,7 @@
 function test_newblock(level, last_pow){
 	var miner_id = rnd_array(test_miners);
 	var miner = test_miners[miner_id];
-	return make_block_pow(miner, miner_id + test_id_offset, level, last_pow)
+	return make_block_pow(miner, max_target, miner_id + test_id_offset, level, last_pow)
 }
 
 function test_newblock_random(){
@@ -12,7 +12,7 @@ function test_newblock_random(){
 
 // Creates some blocks
 function test_blocks(){
-	var genesis = make_block_pow('DEDIS', 11, 0, 0);
+	var genesis = make_block_pow('DEDIS', max_target, 11, 0, 0);
     add_block(genesis);
 //	window.setInterval(test_newblock_random, 500);
 //	for (var b = 0; b < 10; b++){

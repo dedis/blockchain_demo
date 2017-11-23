@@ -57,7 +57,7 @@
     right: 2px;
     bottom: 28px;
 }
-.html-element input {
+.html-element right, input {
     position: absolute;
     right: 2px;
     border: none;

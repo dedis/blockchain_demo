@@ -18,7 +18,8 @@ function add_html_new(){
     joint.shapes.htmlnew.ElementView = joint.dia.ElementView.extend({
         template: [
             '<div class="html-element">',
-            'Label: <input type="text" id="label"/><br>',
+            'Name: <input type="text" id="label"/><br>',
+            'Target: <right>?</right><br>',
             'Miner-ID: <input type="text" id="miner_id"/><br>',
             'Block-#: <input type="text" id="block_cnt"/><br>',
             'Last PoW: <input type="text" id="last_pow"/><br>',
@@ -32,7 +33,7 @@ function add_html_new(){
 
             this.$box = $(_.template(this.template)());
             var t = this;
-            ['#label', '#miner_id', '#block_cnt', '#last_pow', '#pow'].forEach(function(el){
+            ['#label', '#target', '#miner_id', '#block_cnt', '#last_pow', '#pow'].forEach(function(el){
 				t.$box.find(el).on('mousedown click', function(evt) {
     	            evt.stopPropagation();
         	    });
@@ -40,8 +41,9 @@ function add_html_new(){
 	            t.$box.find(el).on('change', _.bind(function(evt) {
     	        	t.model.set(el.slice(1, el.length), $(evt.target).val());
     	        	if (el == "#pow"){
-    	        		console.log("New block:" + JSON.stringify(t.model));
+    	        		// console.log("New block:" + JSON.stringify(t.model));
     	        		var block = make_block(t.model.get("label"),
+                    max_target,
     	        			parseInt(t.model.get("miner_id")),
     	        			parseInt(t.model.get("block_cnt")),
     	        			parseInt(t.model.get("last_pow")),
@@ -57,7 +59,7 @@ function add_html_new(){
             // Remove the box when the model gets removed from the graph.
             this.model.on('remove', this.removeBox, this);
 
-            console.log("init done")
+            // console.log("init done")
             this.updateBox();
         },
         render: function() {
@@ -108,6 +110,7 @@ function add_html(){
             '<div class="html-element">',
             '<label></label><br>',
             '<div id="data" style="text-align:right">',
+            'Target: <span id="target">xx</span><br>',
             'Miner-ID: <span id="miner-id">xx</span><br>',
             'Block-#: <span id="block-cnt">xx</span><br>',
             'Last PoW: <span id="last-pow">xx</span><br>',
@@ -142,6 +145,7 @@ function add_html(){
             // Example of updating the HTML with a data stored in the cell model.
             var block = this.model.get('block')
             this.$box.find('label').text(block.label);
+            this.$box.find('#target').text(leftpad(block.target, 1));
             this.$box.find('#miner-id').text(leftpad(block.miner_id, 2));
             this.$box.find('#block-cnt').text(leftpad(block.block_cnt, 2));
             this.$box.find('#last-pow').text(leftpad(block.last_pow, 3));
