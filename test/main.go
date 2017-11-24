@@ -12,7 +12,7 @@ func calcBlock(id, block, last, diff int) (hash, steps int) {
 func calcHash(hashIn, diff int) (hash, steps int) {
 	hash = hashIn
 	for steps = 0; steps < 10; steps++ {
-		digit := ((hash % 100) + 5*(hash/10%10) + hash/100 + 1) % 10
+		digit := ((hash % 100) + 9*(hash/10%10) + hash/100 + 2) % 10
 		hash = (hash%100)*10 + digit
 		if digit <= diff {
 			break

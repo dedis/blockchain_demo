@@ -34,6 +34,38 @@ function leftpad(v, n) {
   return va
 }
 
+function is_in_chain(block, last) {
+  var pointer = last;
+  console.log("Checking last:", last.block_cnt, last.miner_id);
+  for (var b = last.block_cnt; b >= 0; b--) {
+    for (var c = 0; c < blocks[b].length; c++) {
+      if (pointer.last_pow == blocks[b][c].pow) {
+        pointer = blocks[b][c];
+        if (block.block_cnt == b && block.miner_id == pointer.miner_id &&
+          block.last_pow == pointer.last_pow && block.pow == pointer.pow) {
+          return true;
+        }
+        break;
+      }
+    }
+  }
+  return false;
+}
+
+function is_longest(block) {
+  console.log("Checking longest for:", block.block_cnt, block.miner_id)
+  if (block.block_cnt == blocks.length - 1) {
+    return true;
+  }
+  var last_row = blocks[blocks.length - 1];
+  for (var b = 0; b < last_row.length; b++) {
+    if (is_in_chain(block, last_row[b])) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function previous_block(block) {
   // Search connecting block if counter > 0
   var previous = {};
@@ -58,7 +90,11 @@ function previous_block(block) {
 }
 
 function previous_target(block) {
-  if (block.block_cnt > blocks.length) {
+  return previous_target_find(block.block_cnt, block.miner_id, block)
+}
+
+function previous_target_find(block_cnt, miner_id, block) {
+  if (block_cnt > blocks.length) {
     return -1;
   }
   var target = max_target;
@@ -67,10 +103,12 @@ function previous_target(block) {
     var found = false;
     index.forEach(function(b) {
       // console.log("b.miner_id:", b.miner_id)
-      if (b.miner_id == block.miner_id) {
+      if (b.miner_id == miner_id) {
         found = true;
         // console.log("found same miner_id")
-        block.label = b.label;
+        if (block != undefined) {
+          block.label = b.label;
+        }
       }
     })
     if (found) {
@@ -87,6 +125,9 @@ function previous_target(block) {
 function make_block_pow(label, target, miner_id, block_cnt, last_pow) {
   var block = make_block(label, target, miner_id, block_cnt, last_pow, 0)
   block.pow = calc_pow(block, target)
+  if (!verify_pow(block, target)) {
+    return null;
+  }
   return block;
 }
 
@@ -179,6 +220,7 @@ function update_blocks(block) {
     }
     var y = 100;
     bs.forEach(function(b) {
+      b.element.position(x + 1, y);
       b.element.position(x, y);
       //			console.log("Set block", JSON.stringify(b), "to", b.element.position)
       y += 120;
